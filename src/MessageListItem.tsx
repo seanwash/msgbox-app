@@ -8,6 +8,7 @@ type Props = {
 
 const MessageListItem: React.FC<Props> = ({ message }) => {
   const dispatch = useGlobalDispatch();
+  const hasAttachments = message.attachments.length > 0;
 
   const handleClick = (message: any) => {
     return () => {
@@ -17,7 +18,9 @@ const MessageListItem: React.FC<Props> = ({ message }) => {
 
   return (
     <div
-      className="hover:bg-gray-300 focus:bg-gray-300"
+      className={`p-2 hover:bg-gray-300 focus:bg-gray-300 ${
+        hasAttachments ? "border-r-4 border-blue-500" : ""
+      }`}
       onClick={handleClick(message)}
     >
       <div>{message.subject}</div>

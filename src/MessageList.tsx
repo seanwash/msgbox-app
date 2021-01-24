@@ -6,7 +6,7 @@ const MessageList = () => {
   const state = useGlobalState();
 
   return (
-    <div className="bg-gray-200 w-1/4 p-4">
+    <div className="bg-gray-200 w-1/4">
       {state.messages.map((message, index) => (
         <MessageListItem key={index} message={message} />
       ))}
