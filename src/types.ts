@@ -1,4 +1,7 @@
+import MsgReader from "@npeersab/msgreader";
+
 export interface Message {
+  reader: MsgReader;
   attachments: Attachment[];
   recipients: Recipient[];
   subject: string;

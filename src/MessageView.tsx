@@ -1,6 +1,9 @@
 import React from "react";
 import { useGlobalState } from "./context/GlobalContext";
+// TODO: Is there an alternative here?
+const mime = require("mime-types");
 
+// TODO: Extract
 function parseHeaders(headers: any) {
   const parsedHeaders: any = {};
 
@@ -61,9 +64,25 @@ const MessageView: React.FC = () => {
       <div className="mt-8">
         <h3 className="text-xl font-semibold">Attachments</h3>
         {selectedMessage.attachments.length &&
-          selectedMessage.attachments.map((attachment) => (
-            <div>{attachment.name}</div>
-          ))}
+          selectedMessage.attachments.map((attachment, i) => {
+            const file = selectedMessage.reader.getAttachment(i);
+
+            const fileUrl = URL.createObjectURL(
+              new File([file.content], file.fileName, {
+                type:
+                  mime.lookup(attachment.extension) ||
+                  "application/octet-stream",
+              })
+            );
+
+            return (
+              <div key={attachment.dataId}>
+                <a href={fileUrl} target="_blank" rel="noreferrer">
+                  {attachment.name}
+                </a>
+              </div>
+            );
+          })}
       </div>
     </div>
   ) : (

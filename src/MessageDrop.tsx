@@ -3,7 +3,7 @@ import MsgReader from "@npeersab/msgreader";
 import { useGlobalDispatch } from "./context/GlobalContext";
 import { Message } from "./types";
 
-const MessageDrop: React.FC = (props) => {
+const MessageDrop: React.FC = () => {
   const [fileList, setFileList] = useState<FileList>();
   const dispatch = useGlobalDispatch();
 
@@ -26,13 +26,13 @@ const MessageDrop: React.FC = (props) => {
 
         fileReader.onload = (e) => {
           const buffer = e.target?.result;
-          // TODO: Don't typecast here
           const msgReader = new MsgReader(buffer as ArrayBuffer);
-          const fileData = msgReader.getFileData() as unknown;
+          const fileData = (msgReader.getFileData() as unknown) as Message;
 
           dispatch({
             type: "addMessage",
-            payload: { message: fileData as Message },
+            // We need to keep track of the reader here so that we can use it later to download any attachments.
+            payload: { message: { ...fileData, reader: msgReader } },
           });
         };
 

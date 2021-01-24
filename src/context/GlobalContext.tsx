@@ -9,7 +9,10 @@ type Action =
 type Dispatch = (action: Action) => void;
 
 // TODO: SelectedMessage should just store an ID.
-type State = { messages: Message[]; selectedMessage: Message | undefined };
+type State = {
+  messages: Message[];
+  selectedMessage: Message | undefined;
+};
 
 type ProviderProps = { children: ReactNode };
 
