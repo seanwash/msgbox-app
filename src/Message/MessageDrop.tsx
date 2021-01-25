@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from "react";
 import MsgReader from "@npeersab/msgreader";
-import { useGlobalDispatch } from "./context/GlobalContext";
-import { Message } from "./types";
+import { useGlobalDispatch } from "../context/GlobalContext";
+import { Message } from "../types";
 
 const MessageDrop: React.FC = () => {
   const [fileList, setFileList] = useState<FileList>();

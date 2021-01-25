@@ -1,5 +1,5 @@
 import React from "react";
-import { useGlobalState } from "./context/GlobalContext";
+import { useGlobalState } from "../context/GlobalContext";
 import MessageViewAttachment from "./MessageViewAttachment";
 
 // TODO: Extract & refactor
@@ -31,21 +31,27 @@ const MessageView: React.FC = () => {
     </div>
   );
 
+  const SectionHeading: React.FC = ({ children }) => (
+    <h3 className="text-xl font-semibold border-b-2 border-gray-200 mb-2">
+      {children}
+    </h3>
+  );
+
   return selectedMessage ? (
-    <div className="w-3/4 p-4 overflow-auto">
+    <div className="p-4">
       <time className="text-sm">{headers.Date}</time>
       <h2 className="text-xl font-bold">{selectedMessage.subject}</h2>
 
-      <div className="mt-4">
-        <h3 className="text-xl font-semibold">From</h3>
+      <div className="mt-8">
+        <SectionHeading>From</SectionHeading>
         <Contact
           name={selectedMessage.senderName}
           email={selectedMessage.senderEmail}
         />
       </div>
 
-      <div className="mt-4">
-        <h3 className="text-xl font-semibold">To</h3>
+      <div className="mt-8">
+        <SectionHeading>To</SectionHeading>
         {selectedMessage.recipients.map((recipient) => (
           <Contact
             key={recipient.email}
@@ -56,12 +62,7 @@ const MessageView: React.FC = () => {
       </div>
 
       <div className="mt-8">
-        <h3 className="text-xl font-semibold">Message</h3>
-        <div className="whitespace-pre-wrap">{selectedMessage.body}</div>
-      </div>
-
-      <div className="mt-8">
-        <h3 className="text-xl font-semibold">Attachments</h3>
+        <SectionHeading>Attachments</SectionHeading>
         {selectedMessage.attachments.length ? (
           selectedMessage.attachments.map((attachment, i) => (
             <MessageViewAttachment
@@ -74,6 +75,11 @@ const MessageView: React.FC = () => {
         ) : (
           <div>None</div>
         )}
+      </div>
+
+      <div className="mt-8">
+        <SectionHeading>Message</SectionHeading>
+        <div className="whitespace-pre-wrap">{selectedMessage.body}</div>
       </div>
     </div>
   ) : (

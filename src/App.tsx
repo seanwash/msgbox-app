@@ -1,13 +1,11 @@
 import React from "react";
-import MessageDrop from "./MessageDrop";
 import { GlobalContextProvider } from "./context/GlobalContext";
-import MessageBox from "./MessageBox";
+import MessageBox from "./Message/MessageBox";
 
 function App() {
   return (
     <GlobalContextProvider>
       <div className="App h-full">
-        <MessageDrop />
         <MessageBox />
       </div>
     </GlobalContextProvider>
