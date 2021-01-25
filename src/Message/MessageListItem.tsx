@@ -8,7 +8,6 @@ type Props = {
 
 const MessageListItem: React.FC<Props> = ({ message }) => {
   const dispatch = useGlobalDispatch();
-  const hasAttachments = message.attachments.length > 0;
 
   const handleInteraction = (message: any) => {
     return () => {
@@ -18,13 +17,20 @@ const MessageListItem: React.FC<Props> = ({ message }) => {
 
   return (
     <div
-      className={`px-6 py-5 flex items-center space-x-3 hover:bg-gray-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-pink-500 ${
-        hasAttachments ? "border-r-4 border-blue-500" : ""
-      }`}
+      className={`px-6 py-5 hover:bg-gray-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-pink-500`}
       onClick={handleInteraction(message)}
       onFocus={handleInteraction(message)}
     >
-      <div>{message.subject}</div>
+      <div className="mb-2">{message.subject}</div>
+
+      {message.attachments.map((attachment) => (
+        <span
+          key={attachment.dataId}
+          className="text-xs px-2 py-1 bg-blue-200 rounded-sm mr-1"
+        >
+          {attachment.extension}
+        </span>
+      ))}
     </div>
   );
 };
