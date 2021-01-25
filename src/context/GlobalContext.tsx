@@ -1,17 +1,11 @@
 import { createContext, ReactNode, useContext, useReducer } from "react";
-import { Message } from "../types";
 
-type Action =
-  | { type: "setMessages"; payload: { messages: Message[] } }
-  | { type: "addMessage"; payload: { message: Message } }
-  | { type: "selectMessage"; payload: { message: Message } };
+type Action = { type: "selectMessage"; id?: number };
 
 type Dispatch = (action: Action) => void;
 
-// TODO: SelectedMessage should just store an ID.
 type State = {
-  messages: Message[];
-  selectedMessage: Message | undefined;
+  selectedMessage: number | undefined;
 };
 
 type ProviderProps = { children: ReactNode };
@@ -22,28 +16,12 @@ export const GlobalDispatchContext = createContext<Dispatch | undefined>(
   undefined
 );
 
-const defaultReducerState = {
-  messages: [],
-  selectedMessage: undefined,
-};
-
 function globalReducer(state: State, action: Action) {
   switch (action.type) {
-    case "setMessages": {
-      return { ...state, messages: action.payload.messages };
-    }
-
-    case "addMessage": {
-      return {
-        ...state,
-        messages: [...state.messages, action.payload.message],
-      };
-    }
-
     case "selectMessage": {
       return {
         ...state,
-        selectedMessage: action.payload.message,
+        selectedMessage: action.id,
       };
     }
 
@@ -54,7 +32,9 @@ function globalReducer(state: State, action: Action) {
 }
 
 function GlobalContextProvider({ children }: ProviderProps) {
-  const [state, dispatch] = useReducer(globalReducer, defaultReducerState);
+  const [state, dispatch] = useReducer(globalReducer, {
+    selectedMessage: undefined,
+  });
 
   return (
     <GlobalStateContext.Provider value={state}>

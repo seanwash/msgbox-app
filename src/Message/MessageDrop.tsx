@@ -1,11 +1,11 @@
 import React, { FormEvent, useState } from "react";
 import MsgReader from "@npeersab/msgreader";
-import { useGlobalDispatch } from "../context/GlobalContext";
 import { Message } from "../types";
+import { useIndexedDB } from "react-indexed-db";
 
 const MessageDrop: React.FC = () => {
   const [fileList, setFileList] = useState<FileList>();
-  const dispatch = useGlobalDispatch();
+  const { add } = useIndexedDB("messages");
 
   const onFileChange = (e: FormEvent<HTMLInputElement>) => {
     const files = e.currentTarget.files;
@@ -15,7 +15,7 @@ const MessageDrop: React.FC = () => {
     }
   };
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (fileList?.length) {
@@ -24,16 +24,18 @@ const MessageDrop: React.FC = () => {
 
         const fileReader = new FileReader();
 
-        fileReader.onload = (e) => {
+        // TODO: Handle errors, test with INVALID message file
+        fileReader.onload = async (e) => {
           const buffer = e.target?.result;
           const msgReader = new MsgReader(buffer as ArrayBuffer);
           const fileData = (msgReader.getFileData() as unknown) as Message;
 
-          dispatch({
-            type: "addMessage",
-            // We need to keep track of the reader here so that we can use it later to download any attachments.
-            payload: { message: { ...fileData, reader: msgReader } },
+          const attachments = fileData.attachments.map((attachment, index) => {
+            const file = msgReader.getAttachment(index);
+            return { ...attachment, file };
           });
+
+          await add({ ...fileData, attachments, reader: msgReader });
         };
 
         fileReader.readAsArrayBuffer(file as File);

@@ -1,6 +1,7 @@
 import MsgReader from "@npeersab/msgreader";
 
 export interface Message {
+  id: number;
   reader: MsgReader;
   attachments: Attachment[];
   recipients: Recipient[];
@@ -24,4 +25,5 @@ export interface Attachment {
   fileName: string;
   fileNameShort: string;
   name: string;
+  file: { fileName: string; content: Uint8Array };
 }

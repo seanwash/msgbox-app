@@ -1,17 +1,25 @@
-import React from "react";
-import { useGlobalState } from "../context/GlobalContext";
+import React, { useEffect, useState } from "react";
 import MessageListItem from "./MessageListItem";
+import { useIndexedDB } from "react-indexed-db";
+import { Message } from "../types";
 
 const MessageList = () => {
-  const state = useGlobalState();
+  const { getAll } = useIndexedDB("messages");
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  useEffect(() => {
+    getAll().then((messagesFromDB) => {
+      setMessages(messagesFromDB);
+    });
+  }, [getAll]);
 
   return (
     <nav
       className="divide-y divide-gray-200 border-r border-gray-200"
       aria-label="Sidebar"
     >
-      {state.messages.map((message, index) => (
-        <MessageListItem key={index} message={message} />
+      {messages.map((message) => (
+        <MessageListItem key={message.id} message={message} />
       ))}
     </nav>
   );

@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useGlobalState } from "../context/GlobalContext";
 import MessageViewAttachment from "./MessageViewAttachment";
+import { useIndexedDB } from "react-indexed-db";
+import { Message } from "../types";
 
 // TODO: Extract & refactor
 function parseHeaders(headers: any) {
@@ -23,7 +25,18 @@ function parseHeaders(headers: any) {
 
 const MessageView: React.FC = () => {
   const { selectedMessage } = useGlobalState();
-  const headers = parseHeaders(selectedMessage?.headers);
+  const { getByID } = useIndexedDB("messages");
+  const [message, setMessage] = useState<Message | undefined>();
+
+  useEffect(() => {
+    if (selectedMessage === undefined) return;
+
+    getByID(selectedMessage).then((messageFromDb) => {
+      setMessage(messageFromDb);
+    });
+  }, [selectedMessage, getByID]);
+
+  const headers = parseHeaders(message?.headers);
 
   const Contact = ({ name, email }: { name: string; email: string }) => (
     <div>
@@ -37,22 +50,19 @@ const MessageView: React.FC = () => {
     </h3>
   );
 
-  return selectedMessage ? (
+  return message ? (
     <div className="p-4">
       <time className="text-sm">{headers.Date}</time>
-      <h2 className="text-xl font-bold">{selectedMessage.subject}</h2>
+      <h2 className="text-xl font-bold">{message.subject}</h2>
 
       <div className="mt-8">
         <SectionHeading>From</SectionHeading>
-        <Contact
-          name={selectedMessage.senderName}
-          email={selectedMessage.senderEmail}
-        />
+        <Contact name={message.senderName} email={message.senderEmail} />
       </div>
 
       <div className="mt-8">
         <SectionHeading>To</SectionHeading>
-        {selectedMessage.recipients.map((recipient) => (
+        {message.recipients.map((recipient) => (
           <Contact
             key={recipient.email}
             name={recipient.name}
@@ -63,14 +73,9 @@ const MessageView: React.FC = () => {
 
       <div className="mt-8">
         <SectionHeading>Attachments</SectionHeading>
-        {selectedMessage.attachments.length ? (
-          selectedMessage.attachments.map((attachment, i) => (
-            <MessageViewAttachment
-              key={i}
-              message={selectedMessage}
-              attachment={attachment}
-              index={i}
-            />
+        {message.attachments.length ? (
+          message.attachments.map((attachment, i) => (
+            <MessageViewAttachment key={i} attachment={attachment} />
           ))
         ) : (
           <div>None</div>
@@ -79,7 +84,7 @@ const MessageView: React.FC = () => {
 
       <div className="mt-8">
         <SectionHeading>Message</SectionHeading>
-        <div className="whitespace-pre-wrap">{selectedMessage.body}</div>
+        <div className="whitespace-pre-wrap">{message.body}</div>
       </div>
     </div>
   ) : (
