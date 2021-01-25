@@ -36,23 +36,32 @@ const MessageDrop: React.FC = () => {
           });
         };
 
-        // TODO: Don't typecast here
         fileReader.readAsArrayBuffer(file as File);
       }
     }
   };
 
   return (
-    <form onSubmit={onSubmit}>
+    <form className="bg-blue-100 p-4" onSubmit={onSubmit}>
       <div>
-        <label htmlFor="files" className="block">
+        <label htmlFor="files" className="sr-only">
           MSG Files
         </label>
-        <input id="files" type="file" multiple onChange={onFileChange} />
+        <input
+          className="w-full"
+          id="files"
+          type="file"
+          multiple
+          onChange={onFileChange}
+        />
       </div>
 
       <div className="mt-4">
-        <input className="py-2 px-4" type="submit" value="View Contents" />
+        <input
+          className="block w-full py-2 px-4 rounded-sm cursor-pointer bg-blue-800 text-white"
+          type="submit"
+          value="View Contents"
+        />
       </div>
     </form>
   );
