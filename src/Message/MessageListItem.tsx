@@ -1,29 +1,21 @@
 import React from "react";
-import { useGlobalDispatch } from "../context/GlobalContext";
 import { Message } from "../types";
-import { useIndexedDB } from "react-indexed-db";
 
 type Props = {
   message: Message;
+  onSelect: (message: Message) => void;
+  onDelete: (message: Message) => void;
 };
 
-const MessageListItem: React.FC<Props> = ({ message }) => {
-  const { deleteRecord } = useIndexedDB("messages");
-  const dispatch = useGlobalDispatch();
-
-  const handleInteraction = () => {
-    dispatch({ type: "selectMessage", id: message.id });
-  };
-
-  const handleDelete = async () => {
-    await deleteRecord(message.id);
-  };
+const MessageListItem: React.FC<Props> = ({ message, onSelect, onDelete }) => {
+  const onInteraction = () => onSelect(message);
+  const handleDelete = () => onDelete(message);
 
   return (
     <div className="relative">
       <button
-        onClick={handleInteraction}
-        onFocus={handleInteraction}
+        onClick={onInteraction}
+        onFocus={onInteraction}
         className="px-6 py-5 hover:bg-gray-50 w-full text-left appearance-none"
       >
         <div className="mb-2">{message.subject}</div>

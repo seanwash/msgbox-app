@@ -88,7 +88,7 @@ const MessageView: React.FC = () => {
       </div>
     </div>
   ) : (
-    <div>Select a message.</div>
+    <div className="p-4">Select a message.</div>
   );
 };
 
