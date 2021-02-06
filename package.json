@@ -72,7 +72,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "jln_msg_box"
+            "name": "msgbox"
           }
         },
         {
