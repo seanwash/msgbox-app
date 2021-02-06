@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import MessageListItem from "./MessageListItem";
 import { useIndexedDB } from "react-indexed-db";
-import { Message } from "../types";
-import { useGlobalDispatch } from "../context/GlobalContext";
+import { Message } from "../../types";
+import { useGlobalDispatch } from "../../context/GlobalContext";
 import MessageDrop from "./MessageDrop";
 
 const MessageList = () => {

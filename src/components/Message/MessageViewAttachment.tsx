@@ -1,5 +1,5 @@
 import React from "react";
-import { Attachment } from "../types";
+import { Attachment } from "../../types";
 // TODO: Is there an alternative here?
 const mime = require("mime-types");
 

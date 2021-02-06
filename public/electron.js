@@ -12,8 +12,7 @@ function createWindow() {
     height: 900,
     width: 1400,
     webPreferences: {
-      // TODO: Why do we need to set this here? Is it a possible security concern?
-      nodeIntegration: true,
+      contextIsolation: true,
     },
   });
 

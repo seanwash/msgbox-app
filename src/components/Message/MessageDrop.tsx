@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from "react";
 import MsgReader from "@npeersab/msgreader";
-import { Message } from "../types";
+import { Message } from "../../types";
 import { useIndexedDB } from "react-indexed-db";
 
 type Props = {
@@ -47,7 +47,8 @@ const MessageDrop: React.FC<Props> = ({ onImport }) => {
           await add({ ...fileData, attachments, reader: msgReader });
         };
 
-        fileReader.onloadend = (e) => {
+        // eslint-disable-next-line no-loop-func
+        fileReader.onloadend = () => {
           if (importedFileCount < fileList.length - 1) {
             importedFileCount += 1;
           } else {

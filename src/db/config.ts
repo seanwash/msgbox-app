@@ -1,4 +1,4 @@
-export const DBConfig = {
+export const Config = {
   name: "MsgBox",
   version: 1,
   objectStoresMeta: [

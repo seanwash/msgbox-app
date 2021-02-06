@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useGlobalState } from "../context/GlobalContext";
+import { useGlobalState } from "../../context/GlobalContext";
 import MessageViewAttachment from "./MessageViewAttachment";
 import { useIndexedDB } from "react-indexed-db";
-import { Message } from "../types";
+import { Message } from "../../types";
 
 // TODO: Extract & refactor
 function parseHeaders(headers: any) {

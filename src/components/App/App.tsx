@@ -1,11 +1,11 @@
 import React from "react";
-import { GlobalContextProvider } from "./context/GlobalContext";
-import MessageBox from "./Message/MessageBox";
+import { GlobalContextProvider } from "../../context/GlobalContext";
+import MessageBox from "../Message/MessageBox";
 
-import { DBConfig } from "./db-config";
+import { Config } from "../../db/config";
 import { initDB } from "react-indexed-db";
 
-initDB(DBConfig);
+initDB(Config);
 
 function App() {
   return (
