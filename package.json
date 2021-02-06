@@ -2,6 +2,7 @@
   "name": "jln-msg-box",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "main": "public/electron.js",
   "dependencies": {
     "@npeersab/msgreader": "^2.0.1",
@@ -13,8 +14,8 @@
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "cuid": "^2.1.8",
-    "electron": "^11.2.3",
     "electron-is-dev": "^1.2.0",
+    "electron-squirrel-startup": "^1.0.0",
     "idb-keyval": "^5.0.2",
     "mime-types": "^2.1.28",
     "react": "^17.0.1",
@@ -29,8 +30,10 @@
     "build": "react-scriptsbuild",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron": "wait-on tcp:3000 && electron .",
-    "dev": "concurrently -k \"BROWSER=none npm start\" \"npm:electron\""
+    "electron": "wait-on tcp:3000 && electron-forge start",
+    "dev": "concurrently -k \"BROWSER=none npm start\" \"npm:electron\"",
+    "package": "react-scripts build && electron-forge package",
+    "make": "react-scripts build && electron-forge make"
   },
   "eslintConfig": {
     "extends": [
@@ -51,9 +54,42 @@
     ]
   },
   "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.54",
+    "@electron-forge/maker-deb": "^6.0.0-beta.54",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.54",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
+    "@electron-forge/maker-zip": "^6.0.0-beta.54",
     "@rescripts/cli": "0.0.15",
     "@types/mime-types": "^2.1.0",
     "concurrently": "^5.3.0",
+    "electron": "^11.2.3",
     "wait-on": "^5.2.1"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "jln_msg_box"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
   }
 }
