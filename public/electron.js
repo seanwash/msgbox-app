@@ -2,6 +2,7 @@ const path = require("path");
 const { app, BrowserWindow, ipcMain } = require("electron");
 const isDev = require("electron-is-dev");
 
+// DB Setup, auto run migrations
 const userDataPath = app.getPath("userData");
 const dbName = "msgbox.db";
 const knexConfig = require("./knexfile")(
@@ -23,6 +24,8 @@ function createWindow() {
     height: 900,
     width: 1400,
     webPreferences: {
+      // TODO: Ideally we want to swap these values. Node Integration feels like
+      // a bit of a trap.
       contextIsolation: false,
       nodeIntegration: true,
       preload: __dirname + "/preload.js",
