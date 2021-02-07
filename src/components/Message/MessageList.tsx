@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import MessageListItem from "./MessageListItem";
-import { useIndexedDB } from "react-indexed-db";
 import { Message } from "../../types";
 import { useGlobalDispatch } from "../../context/GlobalContext";
 import MessageDrop from "./MessageDrop";
+import { ipcRenderer } from "electron";
 
 const MessageList = () => {
-  const { getAll, deleteRecord } = useIndexedDB("messages");
   const [messages, setMessages] = useState<Message[]>([]);
   const dispatch = useGlobalDispatch();
 
@@ -15,15 +14,21 @@ const MessageList = () => {
   };
 
   const onDelete = async (message: Message) => {
-    await deleteRecord(message.id);
+    ipcRenderer.sendSync("deleteMessage", message.id);
     getAllMessages();
   };
 
   const getAllMessages = useCallback(() => {
-    getAll().then((messagesFromDB) => {
-      setMessages(messagesFromDB);
-    });
-  }, [getAll]);
+    // TODO: Handle Errors
+    const messages = ipcRenderer
+      .sendSync("fetchAllMessages")
+      .map((message: any) => ({
+        ...message,
+        recipients: message.recipients ? JSON.parse(message.recipients) : [],
+        attachments: message.attachments ? JSON.parse(message.attachments) : [],
+      }));
+    setMessages(messages);
+  }, []);
 
   useEffect(() => {
     getAllMessages();
@@ -38,14 +43,16 @@ const MessageList = () => {
           className="divide-y divide-gray-200 border-r border-gray-200"
           aria-label="Sidebar"
         >
-          {messages.map((message) => (
-            <MessageListItem
-              key={message.id}
-              message={message}
-              onSelect={onSelect}
-              onDelete={onDelete}
-            />
-          ))}
+          {messages.map((message) => {
+            return (
+              <MessageListItem
+                key={message.id}
+                message={message}
+                onSelect={onSelect}
+                onDelete={onDelete}
+              />
+            );
+          })}
         </nav>
       </div>
     </>

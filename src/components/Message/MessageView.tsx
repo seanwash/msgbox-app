@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useGlobalState } from "../../context/GlobalContext";
 import MessageViewAttachment from "./MessageViewAttachment";
-import { useIndexedDB } from "react-indexed-db";
 import { Message } from "../../types";
+import { ipcRenderer } from "electron";
 
 // TODO: Extract & refactor
 function parseHeaders(headers: any) {
@@ -25,16 +25,22 @@ function parseHeaders(headers: any) {
 
 const MessageView: React.FC = () => {
   const { selectedMessage } = useGlobalState();
-  const { getByID } = useIndexedDB("messages");
   const [message, setMessage] = useState<Message | undefined>();
 
   useEffect(() => {
     if (selectedMessage === undefined) return;
 
-    getByID(selectedMessage).then((messageFromDb) => {
-      setMessage(messageFromDb);
-    });
-  }, [selectedMessage, getByID]);
+    const message = ipcRenderer.sendSync("fetchMessage", selectedMessage);
+    message.recipients = message.recipients
+      ? JSON.parse(message.recipients)
+      : [];
+    message.attachments = message.attachments
+      ? JSON.parse(message.attachments)
+      : [];
+    setMessage(message);
+  }, [selectedMessage]);
+
+  console.log("-----", "MessageView", selectedMessage);
 
   const headers = parseHeaders(message?.headers);
 
@@ -62,18 +68,19 @@ const MessageView: React.FC = () => {
 
       <div className="mt-8">
         <SectionHeading>To</SectionHeading>
-        {message.recipients.map((recipient) => (
-          <Contact
-            key={recipient.email}
-            name={recipient.name}
-            email={recipient.email}
-          />
-        ))}
+        {message.recipients &&
+          message.recipients.map((recipient) => (
+            <Contact
+              key={recipient.email}
+              name={recipient.name}
+              email={recipient.email}
+            />
+          ))}
       </div>
 
       <div className="mt-8">
         <SectionHeading>Attachments</SectionHeading>
-        {message.attachments.length ? (
+        {message.attachments ? (
           message.attachments.map((attachment, i) => (
             <MessageViewAttachment key={i} attachment={attachment} />
           ))

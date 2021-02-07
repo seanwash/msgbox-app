@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from "react";
 import MsgReader from "@npeersab/msgreader";
 import { Message } from "../../types";
-import { useIndexedDB } from "react-indexed-db";
+import { ipcRenderer } from "electron";
 
 type Props = {
   onImport: () => void;
@@ -10,7 +10,6 @@ type Props = {
 const MessageDrop: React.FC<Props> = ({ onImport }) => {
   const [fileList, setFileList] = useState<FileList>();
   const [importing, setImporting] = useState<boolean>(false);
-  const { add } = useIndexedDB("messages");
 
   const onFileChange = (e: FormEvent<HTMLInputElement>) => {
     const files = e.currentTarget.files;
@@ -44,7 +43,11 @@ const MessageDrop: React.FC<Props> = ({ onImport }) => {
             return { ...attachment, file };
           });
 
-          await add({ ...fileData, attachments, reader: msgReader });
+          ipcRenderer.sendSync("createMessage", {
+            ...fileData,
+            recipients: JSON.stringify(fileData.recipients),
+            attachments: JSON.stringify(attachments),
+          });
         };
 
         // eslint-disable-next-line no-loop-func
