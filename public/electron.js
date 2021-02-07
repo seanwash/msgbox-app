@@ -39,41 +39,41 @@ function createWindow() {
   );
 
   // TODO: These listeners should be abstracted away to somewhere else.
-  ipcMain.on("createMessage", (event, message) => {
-    knex
+  ipcMain.handle("createMessage", (event, message) => {
+    return knex
       .from("messages")
       .insert(message)
       .then((result) => {
-        event.returnValue = result;
+        return result;
       });
   });
 
-  ipcMain.on("fetchAllMessages", (event) => {
-    knex
+  ipcMain.handle("fetchAllMessages", (event) => {
+    return knex
       .from("messages")
       .select()
       .then((response) => {
-        event.returnValue = response;
+        return response;
       });
   });
 
-  ipcMain.on("fetchMessage", (event, id) => {
-    knex
+  ipcMain.handle("fetchMessage", (event, id) => {
+    return knex
       .from("messages")
       .where({ id })
       .first()
       .then((result) => {
-        event.returnValue = result;
+        return result;
       });
   });
 
-  ipcMain.on("deleteMessage", (event, id) => {
-    knex
+  ipcMain.handle("deleteMessage", (event, id) => {
+    return knex
       .from("messages")
       .where({ id })
       .del()
       .then((result) => {
-        event.returnValue = result;
+        return result;
       });
   });
 }

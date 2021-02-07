@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useGlobalState } from "../../context/GlobalContext";
 import MessageViewAttachment from "./MessageViewAttachment";
-import { Message } from "../../types";
 import { ipcRenderer } from "electron";
+import { useQuery } from "react-query";
 
 // TODO: Extract & refactor
 function parseHeaders(headers: any) {
@@ -25,22 +25,27 @@ function parseHeaders(headers: any) {
 
 const MessageView: React.FC = () => {
   const { selectedMessage } = useGlobalState();
-  const [message, setMessage] = useState<Message | undefined>();
 
-  useEffect(() => {
-    if (selectedMessage === undefined) return;
+  const { data: message, isLoading } = useQuery(
+    ["messages", selectedMessage],
+    () => {
+      return ipcRenderer
+        .invoke("fetchMessage", selectedMessage)
+        .then((result) => {
+          result.recipients = result.recipients
+            ? JSON.parse(result.recipients)
+            : [];
+          result.attachments = result.attachments
+            ? JSON.parse(result.attachments)
+            : [];
 
-    const message = ipcRenderer.sendSync("fetchMessage", selectedMessage);
-    message.recipients = message.recipients
-      ? JSON.parse(message.recipients)
-      : [];
-    message.attachments = message.attachments
-      ? JSON.parse(message.attachments)
-      : [];
-    setMessage(message);
-  }, [selectedMessage]);
-
-  console.log("-----", "MessageView", selectedMessage);
+          return result;
+        });
+    },
+    {
+      enabled: !!selectedMessage,
+    }
+  );
 
   const headers = parseHeaders(message?.headers);
 
@@ -56,7 +61,7 @@ const MessageView: React.FC = () => {
     </h3>
   );
 
-  return message ? (
+  return !isLoading && message ? (
     <div className="p-4">
       <time className="text-sm">{headers.Date}</time>
       <h2 className="text-xl font-bold">{message.subject}</h2>
@@ -69,7 +74,7 @@ const MessageView: React.FC = () => {
       <div className="mt-8">
         <SectionHeading>To</SectionHeading>
         {message.recipients &&
-          message.recipients.map((recipient) => (
+          message.recipients.map((recipient: any) => (
             <Contact
               key={recipient.email}
               name={recipient.name}
@@ -81,7 +86,7 @@ const MessageView: React.FC = () => {
       <div className="mt-8">
         <SectionHeading>Attachments</SectionHeading>
         {message.attachments ? (
-          message.attachments.map((attachment, i) => (
+          message.attachments.map((attachment: any, i: number) => (
             <MessageViewAttachment key={i} attachment={attachment} />
           ))
         ) : (

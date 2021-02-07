@@ -2,14 +2,15 @@ import React, { FormEvent, useState } from "react";
 import MsgReader from "@npeersab/msgreader";
 import { Message } from "../../types";
 import { ipcRenderer } from "electron";
+import { useMutation, useQueryClient } from "react-query";
 
-type Props = {
-  onImport: () => void;
-};
-
-const MessageDrop: React.FC<Props> = ({ onImport }) => {
+const MessageDrop: React.FC = () => {
   const [fileList, setFileList] = useState<FileList>();
   const [importing, setImporting] = useState<boolean>(false);
+  const queryClient = useQueryClient();
+  const mutation = useMutation(({ message }: any) => {
+    return ipcRenderer.invoke("createMessage", message);
+  });
 
   const onFileChange = (e: FormEvent<HTMLInputElement>) => {
     const files = e.currentTarget.files;
@@ -43,10 +44,12 @@ const MessageDrop: React.FC<Props> = ({ onImport }) => {
             return { ...attachment, file };
           });
 
-          ipcRenderer.sendSync("createMessage", {
-            ...fileData,
-            recipients: JSON.stringify(fileData.recipients),
-            attachments: JSON.stringify(attachments),
+          mutation.mutate({
+            message: {
+              ...fileData,
+              recipients: JSON.stringify(fileData.recipients),
+              attachments: JSON.stringify(attachments),
+            },
           });
         };
 
@@ -55,8 +58,8 @@ const MessageDrop: React.FC<Props> = ({ onImport }) => {
           if (importedFileCount < fileList.length - 1) {
             importedFileCount += 1;
           } else {
-            onImport();
             setImporting(false);
+            queryClient.invalidateQueries("messages");
           }
         };
 
