@@ -1,0 +1,8 @@
+{
+  "watch": [
+    "src/app/main.ts",
+    "src/app/*"
+  ],
+  "exec": "webpack --mode=development --config ./webpack.app.config.js && electron ./dist/main.js",
+  "ext": "ts"
+}

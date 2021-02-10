@@ -40,6 +40,7 @@ const MessageDrop: React.FC = () => {
           const fileData = (msgReader.getFileData() as unknown) as Message;
 
           const attachments = fileData.attachments.map((attachment, index) => {
+            // Returns fileName & content
             const file = msgReader.getAttachment(index);
             return { ...attachment, file };
           });

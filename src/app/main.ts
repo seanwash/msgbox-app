@@ -1,6 +1,6 @@
-const path = require("path");
-const { app, BrowserWindow, ipcMain } = require("electron");
-const isDev = require("electron-is-dev");
+import { app, BrowserWindow, ipcMain } from "electron";
+import * as path from "path";
+import * as isDev from "electron-is-dev";
 
 // DB Setup, auto run migrations
 const userDataPath = app.getPath("userData");
@@ -12,7 +12,7 @@ const knexConfig = require("./knexfile")(
 const knex = require("knex")(knexConfig);
 knex.migrate
   .latest(knexConfig)
-  .catch((err) => console.log("-----", "migration err", err));
+  .catch((err: Error) => console.log("-----", "migration err", err));
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -28,22 +28,20 @@ function createWindow() {
       // a bit of a trap.
       contextIsolation: false,
       nodeIntegration: true,
-      preload: __dirname + "/preload.js",
     },
   });
 
   win.loadURL(
-    isDev
-      ? "http://localhost:3000"
-      : `file://${path.join(__dirname, "../build/index.html")}`
+    isDev ? "http://localhost:9000" : `file://${app.getAppPath()}/index.html`
   );
 
   // TODO: These listeners should be abstracted away to somewhere else.
   ipcMain.handle("createMessage", (event, message) => {
+    // TODO: Handle the saving of images
     return knex
       .from("messages")
       .insert(message)
-      .then((result) => {
+      .then((result: any) => {
         return result;
       });
   });

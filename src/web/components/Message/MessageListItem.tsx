@@ -10,8 +10,6 @@ type Props = {
 const MessageListItem: React.FC<Props> = ({ message, onSelect, onDelete }) => {
   const onInteraction = () => onSelect(message);
   const handleDelete = () => onDelete(message);
-
-  console.log("-----", "MessageListItem", message);
   const attachments: Attachment[] = message.attachments;
 
   return (

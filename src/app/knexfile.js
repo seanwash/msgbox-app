@@ -6,7 +6,7 @@ module.exports = function (path, isDev) {
       filename: path,
     }),
     migrations: {
-      directory: "./public/migrations",
+      directory: "src/app/migrations",
     },
   };
 };

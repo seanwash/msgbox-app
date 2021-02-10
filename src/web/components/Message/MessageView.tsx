@@ -5,6 +5,7 @@ import { ipcRenderer } from "electron";
 import { useQuery } from "react-query";
 
 // TODO: Extract & refactor
+
 function parseHeaders(headers: any) {
   const parsedHeaders: any = {};
 
