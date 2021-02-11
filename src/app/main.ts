@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import * as isDev from "electron-is-dev";
 import setup from "./db";
 const knex = setup(app);
+import registerChannels from "./channels";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -24,45 +25,8 @@ function createWindow() {
     isDev ? "http://localhost:9000" : `file://${app.getAppPath()}/index.html`
   );
 
-  // TODO: These listeners should be abstracted away to somewhere else.
-  ipcMain.handle("createMessage", (event, message) => {
-    // TODO: Handle the saving of images
-    return knex
-      .from("messages")
-      .insert(message)
-      .then((result: any) => {
-        return result;
-      });
-  });
-
-  ipcMain.handle("fetchAllMessages", (event) => {
-    return knex
-      .from("messages")
-      .select()
-      .then((response) => {
-        return response;
-      });
-  });
-
-  ipcMain.handle("fetchMessage", (event, id) => {
-    return knex
-      .from("messages")
-      .where({ id })
-      .first()
-      .then((result) => {
-        return result;
-      });
-  });
-
-  ipcMain.handle("deleteMessage", (event, id) => {
-    return knex
-      .from("messages")
-      .where({ id })
-      .del()
-      .then((result) => {
-        return result;
-      });
-  });
+  // Register all of the available channels that listen for messages sent by the renderer process.
+  registerChannels(knex);
 }
 
 app.whenReady().then(createWindow);
