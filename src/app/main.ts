@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow } from "electron";
 import * as isDev from "electron-is-dev";
 import setup from "./db";
 const knex = setup(app);

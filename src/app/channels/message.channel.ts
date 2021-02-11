@@ -4,7 +4,7 @@ import Knex from "knex";
 export function fetchAllMessages(knex: Knex): IChannel {
   return {
     name: "fetchAllMessages",
-    listener: (event, message) => {
+    listener: (_event, _message) => {
       return knex
         .from("messages")
         .select()
