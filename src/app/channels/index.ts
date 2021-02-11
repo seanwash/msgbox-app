@@ -1,5 +1,4 @@
 import { ipcMain } from "electron";
-import Knex from "knex";
 
 import { IChannel } from "../../types";
 
@@ -10,13 +9,12 @@ import {
   deleteMessage,
 } from "./message.channel";
 
-export default function (knex: Knex) {
-  // TODO: There has to be a better way to do this.
+export default function () {
   const availableChannels: IChannel[] = [
-    fetchAllMessages(knex),
-    fetchMessage(knex),
-    createMessage(knex),
-    deleteMessage(knex),
+    fetchAllMessages,
+    fetchMessage,
+    createMessage,
+    deleteMessage,
   ];
 
   availableChannels.forEach(({ name, listener }) => {

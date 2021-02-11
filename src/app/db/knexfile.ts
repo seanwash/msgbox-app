@@ -1,10 +1,11 @@
 import { Config } from "knex";
 
-export default function (path, isDev): Config {
+export default function (path: string): Config {
   return {
     client: "sqlite3",
+    // sqlite doesn't support inserting default values.
+    useNullAsDefault: true,
     connection: () => ({
-      debug: isDev,
       filename: path,
     }),
     migrations: {

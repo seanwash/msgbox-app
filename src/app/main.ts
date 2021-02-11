@@ -1,8 +1,10 @@
 import { app, BrowserWindow } from "electron";
 import * as isDev from "electron-is-dev";
-import setup from "./db";
-const knex = setup(app);
+import { migrate } from "./db";
 import registerChannels from "./channels";
+
+// Ensure that the database is always reflects the latest schema.
+migrate();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -26,7 +28,7 @@ function createWindow() {
   );
 
   // Register all of the available channels that listen for messages sent by the renderer process.
-  registerChannels(knex);
+  registerChannels();
 }
 
 app.whenReady().then(createWindow);
