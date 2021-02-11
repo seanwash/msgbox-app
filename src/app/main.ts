@@ -1,18 +1,7 @@
 import { app, BrowserWindow, ipcMain } from "electron";
-import * as path from "path";
 import * as isDev from "electron-is-dev";
-
-// DB Setup, auto run migrations
-const userDataPath = app.getPath("userData");
-const dbName = "msgbox.db";
-const knexConfig = require("./knexfile")(
-  path.join(userDataPath, dbName),
-  isDev
-);
-const knex = require("knex")(knexConfig);
-knex.migrate
-  .latest(knexConfig)
-  .catch((err: Error) => console.log("-----", "migration err", err));
+import setup from "./db";
+const knex = setup(app);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {

@@ -1,4 +1,6 @@
-module.exports = function (path, isDev) {
+import { Config } from "knex";
+
+export default function (path, isDev): Config {
   return {
     client: "sqlite3",
     connection: () => ({
@@ -6,7 +8,7 @@ module.exports = function (path, isDev) {
       filename: path,
     }),
     migrations: {
-      directory: "src/app/migrations",
+      directory: "src/app/db/migrations",
     },
   };
-};
+}
