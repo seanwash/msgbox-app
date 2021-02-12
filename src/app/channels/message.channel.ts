@@ -1,7 +1,12 @@
+import { app } from "electron";
+import path from "path";
+import fs from "fs";
 import { setup } from "../db";
-import { IChannel } from "../../types";
+import { IChannel, Attachment } from "../../types";
 
 const knex = setup();
+// TODO: We need to make sure that this dir exists before we can write to it.
+const DATA_DIR = path.join(app.getPath("userData"), "MsgBoxAttachments");
 
 export const fetchAllMessages: IChannel = {
   name: "fetchAllMessages",
@@ -31,7 +36,25 @@ export const fetchMessage: IChannel = {
 export const createMessage: IChannel = {
   name: "createMessage",
   listener: (event, message) => {
-    // TODO: Handle the saving of images
+    // TODO: EW. Don't judge me.
+    let attachmentData: Record<string, string>[] = [];
+
+    message.attachments.forEach((attachment: Attachment) => {
+      const path = `${DATA_DIR}/${attachment.file.fileName}`;
+
+      fs.writeFileSync(path, Buffer.from(attachment.file.content), {
+        flag: "w", // create if doesn't already exist
+      });
+
+      attachmentData.push({
+        fileName: attachment.file.fileName,
+        extension: attachment.extension,
+        path,
+      });
+    });
+
+    message.attachments = JSON.stringify(attachmentData);
+
     return knex
       .from("messages")
       .insert(message)
@@ -44,6 +67,8 @@ export const createMessage: IChannel = {
 export const deleteMessage: IChannel = {
   name: "deleteMessage",
   listener: (event, id) => {
+    // TODO: We must also delete any existing attachments.
+
     return knex
       .from("messages")
       .where({ id })

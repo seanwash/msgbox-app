@@ -4,7 +4,7 @@ import path from "path";
 import setup from "./setup";
 
 // TODO: Dedupe with ./setup.ts
-const DATABASE_NAME = "msgbox.db";
+const DATABASE_NAME = "MsgBox.db";
 
 export default function migrate() {
   const userDataPath = app.getPath("userData");

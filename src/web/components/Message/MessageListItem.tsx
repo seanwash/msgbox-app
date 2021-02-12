@@ -1,5 +1,5 @@
 import React from "react";
-import { Message, Attachment } from "../../types";
+import { Message, Attachment } from "../../../types";
 
 type Props = {
   message: Message;
@@ -12,6 +12,8 @@ const MessageListItem: React.FC<Props> = ({ message, onSelect, onDelete }) => {
   const handleDelete = () => onDelete(message);
   const attachments: Attachment[] = message.attachments;
 
+  console.log("-----", "MessageListItem", message);
+
   return (
     <div className="relative">
       <button
@@ -23,7 +25,7 @@ const MessageListItem: React.FC<Props> = ({ message, onSelect, onDelete }) => {
 
         {attachments.map((attachment) => (
           <span
-            key={attachment.dataId}
+            key={attachment.fileName}
             className="text-xs px-2 py-1 bg-blue-200 rounded-sm mr-2"
           >
             {attachment.extension}

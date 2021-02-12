@@ -1,6 +1,6 @@
 import React from "react";
 import MessageListItem from "./MessageListItem";
-import { Message } from "../../types";
+import { Message } from "../../../types";
 import { useGlobalDispatch } from "../../context/GlobalContext";
 import MessageDrop from "./MessageDrop";
 import { ipcRenderer } from "electron";

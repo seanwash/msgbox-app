@@ -3,7 +3,8 @@ import * as path from "path";
 import Knex from "knex";
 import getConfig from "./knexfile";
 
-const DATABASE_NAME = "msgbox.db";
+// TODO: Dedupe this.
+const DATABASE_NAME = "MsgBox.db";
 
 export default function setup() {
   const userDataPath = app.getPath("userData");

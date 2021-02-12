@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from "react";
 import MsgReader from "@npeersab/msgreader";
-import { Message } from "../../types";
+import { Message } from "../../../types";
 import { ipcRenderer } from "electron";
 import { useMutation, useQueryClient } from "react-query";
 
@@ -48,8 +48,9 @@ const MessageDrop: React.FC = () => {
           mutation.mutate({
             message: {
               ...fileData,
+              // TODO: Don't stringify this?
               recipients: JSON.stringify(fileData.recipients),
-              attachments: JSON.stringify(attachments),
+              attachments: attachments,
             },
           });
         };
