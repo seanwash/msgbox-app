@@ -12,8 +12,6 @@ const MessageListItem: React.FC<Props> = ({ message, onSelect, onDelete }) => {
   const handleDelete = () => onDelete(message);
   const attachments: Attachment[] = message.attachments;
 
-  console.log("-----", "MessageListItem", message);
-
   return (
     <div className="relative">
       <button
