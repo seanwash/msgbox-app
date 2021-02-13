@@ -1,15 +1,18 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import MessageListItem from "./MessageListItem";
 import { Message } from "../../../types";
 import { useGlobalDispatch } from "../../context/GlobalContext";
 import MessageDrop from "./MessageDrop";
 import { ipcRenderer } from "electron";
 import { useInfiniteQuery, useQueryClient } from "react-query";
+import { useIntersection } from "react-use";
 
 const MessageList = () => {
   const dispatch = useGlobalDispatch();
   const queryClient = useQueryClient();
-  const limit = 8;
+  const limit = 20;
+  const loadMoreRef = useRef(null);
+  const loadMoreIntersection = useIntersection(loadMoreRef, {});
 
   const {
     data,
@@ -32,6 +35,10 @@ const MessageList = () => {
       },
     }
   );
+
+  useEffect(() => {
+    loadMoreIntersection?.isIntersecting && fetchNextPage();
+  }, [loadMoreIntersection]);
 
   const onSelect = (message: Message) => {
     const id = message._id as unknown;
@@ -74,6 +81,7 @@ const MessageList = () => {
             )}
           {!isLoading && hasNextPage && (
             <button
+              ref={loadMoreRef}
               className="px-6 py-5 bg-black text-white w-full"
               onClick={() => fetchNextPage()}
               disabled={!hasNextPage || isFetchingNextPage}
