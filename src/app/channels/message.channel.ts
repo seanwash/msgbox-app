@@ -13,10 +13,26 @@ export const fetchAllMessages: IChannel = {
   listener: async (_event, args) => {
     const opts = { limit: 2, skip: 0, ...args };
 
-    return await db.allDocs<Message>({
-      include_docs: true,
-      ...opts,
-    });
+    if (args.search?.length > 1) {
+      // https://github.com/pouchdb-community/pouchdb-quick-search
+      // TODO: Is there a way to make the search plugin work with TS?
+      // @ts-ignore
+      return await db.search<Message>({
+        include_docs: true,
+        query: args.search,
+        fields: {
+          subject: 5,
+          message: 1,
+        },
+        mm: "33%",
+        ...opts,
+      });
+    } else {
+      return await db.allDocs<Message>({
+        include_docs: true,
+        ...opts,
+      });
+    }
   },
 };
 
@@ -34,6 +50,7 @@ export const createMessage: IChannel = {
     let attachmentData: Attachment[] = [];
 
     message.attachments.forEach((attachment: AttachmentDTO) => {
+      // TODO: Files should live in a directory with other files separated by attachment id.
       const path = `${DATA_DIR}/${attachment.file.fileName}`;
 
       fs.writeFileSync(path, Buffer.from(attachment.file.content), {
@@ -49,7 +66,13 @@ export const createMessage: IChannel = {
 
     message.attachments = attachmentData;
 
-    return await db.post(message);
+    try {
+      const result = await db.post(message);
+      console.log("-----", "created message", result.id);
+      return result;
+    } catch (err) {
+      console.log("-----", "failed to create", err);
+    }
   },
 };
 

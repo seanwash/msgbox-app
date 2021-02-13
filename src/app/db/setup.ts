@@ -1,6 +1,9 @@
 import { app } from "electron";
 import * as path from "path";
 import Pouch from "pouchdb";
+import PouchDbQuickSearch from "pouchdb-quick-search";
+
+Pouch.plugin(PouchDbQuickSearch);
 
 const DATABASE_NAME = "MsgBox.db";
 

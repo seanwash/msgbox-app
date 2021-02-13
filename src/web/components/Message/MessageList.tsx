@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import MessageListItem from "./MessageListItem";
 import { Message } from "../../../types";
 import { useGlobalDispatch } from "../../context/GlobalContext";
@@ -13,6 +13,7 @@ const MessageList = () => {
   const limit = 20;
   const loadMoreRef = useRef(null);
   const loadMoreIntersection = useIntersection(loadMoreRef, {});
+  const [search, setSearch] = useState<string>("");
 
   const {
     data,
@@ -21,11 +22,12 @@ const MessageList = () => {
     fetchNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery(
-    "messages",
+    ["fetchAllMessages", search],
     async ({ pageParam }) => {
       return await ipcRenderer.invoke("fetchAllMessages", {
         skip: pageParam,
         limit,
+        search,
       });
     },
     {
@@ -40,6 +42,11 @@ const MessageList = () => {
     loadMoreIntersection?.isIntersecting && fetchNextPage();
   }, [loadMoreIntersection]);
 
+  const handleSearch = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    queryClient.invalidateQueries(["fetchAllMessages", search]);
+  };
+
   const onSelect = (message: Message) => {
     const id = message._id as unknown;
     dispatch({ type: "selectMessage", id: id as number });
@@ -48,19 +55,32 @@ const MessageList = () => {
   const onDelete = async (message: Message) => {
     await ipcRenderer.invoke("deleteMessage", message._id);
     dispatch({ type: "selectMessage", id: undefined });
-    await queryClient.invalidateQueries("messages");
+    await queryClient.invalidateQueries("fetchAllMessages");
   };
 
   return (
     <>
       <MessageDrop />
 
+      <div>
+        <form onSubmit={handleSearch}>
+          <input
+            className="w-full px-6 py-4"
+            type="search"
+            placeholder="Search"
+            onChange={(event) => setSearch(event.currentTarget.value)}
+            value={search}
+          />
+        </form>
+      </div>
+
+      {!isLoading && data && (
+        <div className="bg-gray-100 px-6 py-4">
+          {data.pages[0].total_rows} Msgs
+        </div>
+      )}
+
       <div className="overflow-y-auto">
-        {!isLoading && data && (
-          <div className="bg-gray-100 px-6 py-4">
-            {data.pages[0].total_rows} Msgs
-          </div>
-        )}
         <nav
           className="divide-y divide-gray-200 border-r border-gray-200"
           aria-label="Sidebar"

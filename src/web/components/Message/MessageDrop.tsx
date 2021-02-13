@@ -39,6 +39,13 @@ const MessageDrop: React.FC = () => {
           const msgReader = new MsgReader(buffer as ArrayBuffer);
           const fileData = (msgReader.getFileData() as unknown) as Message;
 
+          // @ts-ignore
+          if (fileData.error) {
+            // @ts-ignore
+            console.log("-----", "import error", fileData.error);
+            return;
+          }
+
           const attachments = fileData.attachments.map((attachment, index) => {
             // Returns fileName & content
             const file = msgReader.getAttachment(index);
