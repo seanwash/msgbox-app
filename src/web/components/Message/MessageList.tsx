@@ -4,23 +4,34 @@ import { Message } from "../../../types";
 import { useGlobalDispatch } from "../../context/GlobalContext";
 import MessageDrop from "./MessageDrop";
 import { ipcRenderer } from "electron";
-import { useQuery, useQueryClient } from "react-query";
+import { useInfiniteQuery, useQueryClient } from "react-query";
 
 const MessageList = () => {
   const dispatch = useGlobalDispatch();
   const queryClient = useQueryClient();
+  const limit = 8;
 
-  const { data, isLoading } = useQuery("messages", () => {
-    return ipcRenderer.invoke("fetchAllMessages").then((results) => {
-      return results.map((message: any) => {
-        return {
-          ...message,
-          recipients: message.recipients ? message.recipients : [],
-          attachments: message.attachments ? message.attachments : [],
-        };
+  const {
+    data,
+    isLoading,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery(
+    "messages",
+    async ({ pageParam }) => {
+      return await ipcRenderer.invoke("fetchAllMessages", {
+        skip: pageParam,
+        limit,
       });
-    });
-  });
+    },
+    {
+      getNextPageParam: (lastPage, allPages) => {
+        const rowsToSkip = allPages.map((page) => page.rows).flat().length;
+        if (rowsToSkip < lastPage.total_rows) return rowsToSkip;
+      },
+    }
+  );
 
   const onSelect = (message: Message) => {
     const id = message._id as unknown;
@@ -38,21 +49,38 @@ const MessageList = () => {
       <MessageDrop />
 
       <div className="overflow-y-auto">
+        {!isLoading && data && (
+          <div className="bg-gray-100 px-6 py-4">
+            {data.pages[0].total_rows} Msgs
+          </div>
+        )}
         <nav
           className="divide-y divide-gray-200 border-r border-gray-200"
           aria-label="Sidebar"
         >
           {!isLoading &&
-            data.map((message: any) => {
-              return (
-                <MessageListItem
-                  key={message._id}
-                  message={message}
-                  onSelect={onSelect}
-                  onDelete={onDelete}
-                />
-              );
-            })}
+            data &&
+            data.pages.map((page) =>
+              page.rows.map((row: any) => {
+                return (
+                  <MessageListItem
+                    key={row.doc._id}
+                    message={row.doc}
+                    onSelect={onSelect}
+                    onDelete={onDelete}
+                  />
+                );
+              })
+            )}
+          {!isLoading && hasNextPage && (
+            <button
+              className="px-6 py-5 bg-black text-white w-full"
+              onClick={() => fetchNextPage()}
+              disabled={!hasNextPage || isFetchingNextPage}
+            >
+              Load More
+            </button>
+          )}
         </nav>
       </div>
     </>

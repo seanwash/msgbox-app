@@ -2,7 +2,7 @@ import { app } from "electron";
 import path from "path";
 import fs from "fs";
 import { Db } from "../db";
-import { IChannel, Attachment, Message, AttachmentDTO } from "../../types";
+import { Attachment, AttachmentDTO, IChannel, Message } from "../../types";
 
 const db = Db();
 // TODO: We need to make sure that this dir exists before we can write to it.
@@ -10,9 +10,13 @@ const DATA_DIR = path.join(app.getPath("userData"), "MsgBox.Attachments");
 
 export const fetchAllMessages: IChannel = {
   name: "fetchAllMessages",
-  listener: async (_event, _message) => {
-    const result = await db.allDocs<Message>({ include_docs: true });
-    return result.rows.map((row) => row.doc);
+  listener: async (_event, args) => {
+    const opts = { limit: 2, skip: 0, ...args };
+
+    return await db.allDocs<Message>({
+      include_docs: true,
+      ...opts,
+    });
   },
 };
 
