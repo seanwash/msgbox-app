@@ -1,19 +1,18 @@
-const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
 
 module.exports = {
-  entry: "./src/web/index.tsx",
+  entry: path.join(__dirname, "../src/web/index.tsx"),
   target: "electron-renderer",
   devtool: "source-map",
   devServer: {
-    contentBase: path.join(__dirname, "dist/renderer.js"),
+    contentBase: path.join(__dirname, "../dist/renderer.js"),
     compress: true,
     port: 9000,
   },
   resolve: {
     alias: {
-      ["web"]: path.resolve(__dirname, "src/web"),
+      ["web"]: path.join(__dirname, "../src/web"),
     },
     extensions: [".tsx", ".ts", ".js"],
   },
@@ -32,12 +31,12 @@ module.exports = {
     ],
   },
   output: {
-    path: __dirname + "/dist",
+    path: path.join(__dirname, "../dist"),
     filename: "renderer.js",
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./src/web/index.html",
+      template: path.join(__dirname, "../src/web/index.html"),
     }),
   ],
 };

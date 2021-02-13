@@ -1,11 +1,11 @@
 const path = require("path");
 
 module.exports = {
-  entry: "./src/app/main.ts",
+  entry: path.join(__dirname, "../src/app/main.ts"),
   target: "electron-main",
   resolve: {
     alias: {
-      ["app"]: path.resolve(__dirname, "src/app"),
+      ["app"]: path.join(__dirname, "../src/app"),
     },
     extensions: [".tsx", ".ts", ".js"],
   },
@@ -20,7 +20,7 @@ module.exports = {
     ],
   },
   output: {
-    path: __dirname + "/dist",
+    path: path.join(__dirname, "../dist"),
     filename: "main.js",
   },
   externals: {
