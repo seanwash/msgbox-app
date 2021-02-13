@@ -23,5 +23,9 @@ module.exports = {
     path: __dirname + "/dist",
     filename: "main.js",
   },
-  externals: { sqlite3: "commonjs2 sqlite3", knex: "commonjs knex" },
+  externals: {
+    sqlite3: "commonjs sqlite3",
+    knex: "commonjs knex",
+    pouchdb: "commonjs pouchdb",
+  },
 };

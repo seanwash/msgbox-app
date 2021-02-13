@@ -1,45 +1,35 @@
 import { app } from "electron";
 import path from "path";
 import fs from "fs";
-import { setup } from "../db";
-import { IChannel, Attachment } from "../../types";
+import { Db } from "../db";
+import { IChannel, Attachment, Message, AttachmentDTO } from "../../types";
 
-const knex = setup();
+const db = Db();
 // TODO: We need to make sure that this dir exists before we can write to it.
-const DATA_DIR = path.join(app.getPath("userData"), "MsgBoxAttachments");
+const DATA_DIR = path.join(app.getPath("userData"), "MsgBox.Attachments");
 
 export const fetchAllMessages: IChannel = {
   name: "fetchAllMessages",
-  listener: (_event, _message) => {
-    return knex
-      .from("messages")
-      .select()
-      .then((response) => {
-        return response;
-      });
+  listener: async (_event, _message) => {
+    const result = await db.allDocs<Message>({ include_docs: true });
+    return result.rows.map((row) => row.doc);
   },
 };
 
 export const fetchMessage: IChannel = {
   name: "fetchMessage",
-  listener: (event, id) => {
-    return knex
-      .from("messages")
-      .where({ id })
-      .first()
-      .then((result) => {
-        return result;
-      });
+  listener: async (event, id) => {
+    return await db.get<Message>(id);
   },
 };
 
 export const createMessage: IChannel = {
   name: "createMessage",
-  listener: (event, message) => {
+  listener: async (event, message) => {
     // TODO: EW. Don't judge me.
-    let attachmentData: Record<string, string>[] = [];
+    let attachmentData: Attachment[] = [];
 
-    message.attachments.forEach((attachment: Attachment) => {
+    message.attachments.forEach((attachment: AttachmentDTO) => {
       const path = `${DATA_DIR}/${attachment.file.fileName}`;
 
       fs.writeFileSync(path, Buffer.from(attachment.file.content), {
@@ -53,28 +43,25 @@ export const createMessage: IChannel = {
       });
     });
 
-    message.attachments = JSON.stringify(attachmentData);
+    message.attachments = attachmentData;
 
-    return knex
-      .from("messages")
-      .insert(message)
-      .then((result: any) => {
-        return result;
-      });
+    return await db.post(message);
   },
 };
 
 export const deleteMessage: IChannel = {
   name: "deleteMessage",
-  listener: (event, id) => {
-    // TODO: We must also delete any existing attachments.
+  listener: async (event, id) => {
+    const doc = await db.get<Message>(id);
 
-    return knex
-      .from("messages")
-      .where({ id })
-      .del()
-      .then((result) => {
-        return result;
-      });
+    doc.attachments.forEach((attachment: Attachment) => {
+      try {
+        fs.unlinkSync(attachment.path);
+      } catch (err) {
+        console.log("----- Error", "deleteMessage", err);
+      }
+    });
+
+    return await db.remove(doc);
   },
 };

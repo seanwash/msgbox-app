@@ -12,20 +12,24 @@ const MessageList = () => {
 
   const { data, isLoading } = useQuery("messages", () => {
     return ipcRenderer.invoke("fetchAllMessages").then((results) => {
-      return results.map((message: any) => ({
-        ...message,
-        recipients: message.recipients ? JSON.parse(message.recipients) : [],
-        attachments: message.attachments ? JSON.parse(message.attachments) : [],
-      }));
+      return results.map((message: any) => {
+        return {
+          ...message,
+          recipients: message.recipients ? message.recipients : [],
+          attachments: message.attachments ? message.attachments : [],
+        };
+      });
     });
   });
 
   const onSelect = (message: Message) => {
-    dispatch({ type: "selectMessage", id: message.id });
+    const id = message._id as unknown;
+    dispatch({ type: "selectMessage", id: id as number });
   };
 
   const onDelete = async (message: Message) => {
-    await ipcRenderer.invoke("deleteMessage", message.id);
+    await ipcRenderer.invoke("deleteMessage", message._id);
+    dispatch({ type: "selectMessage", id: undefined });
     await queryClient.invalidateQueries("messages");
   };
 
@@ -42,7 +46,7 @@ const MessageList = () => {
             data.map((message: any) => {
               return (
                 <MessageListItem
-                  key={message.id}
+                  key={message._id}
                   message={message}
                   onSelect={onSelect}
                   onDelete={onDelete}

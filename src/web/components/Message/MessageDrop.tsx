@@ -48,8 +48,7 @@ const MessageDrop: React.FC = () => {
           mutation.mutate({
             message: {
               ...fileData,
-              // TODO: Don't stringify this?
-              recipients: JSON.stringify(fileData.recipients),
+              recipients: fileData.recipients,
               attachments: attachments,
             },
           });

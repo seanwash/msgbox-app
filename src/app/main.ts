@@ -1,10 +1,6 @@
 import { app, BrowserWindow } from "electron";
 import * as isDev from "electron-is-dev";
-import { migrate } from "./db";
 import registerChannels from "./channels";
-
-// Ensure that the database is always reflects the latest schema.
-migrate();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {

@@ -14,11 +14,8 @@ export interface IChannel {
   listener: (event: IpcMainInvokeEvent, message: any) => any;
 }
 
-import MsgReader from "@npeersab/msgreader";
-
 export interface Message {
-  id: number;
-  reader: MsgReader;
+  _id: number;
   attachments: Attachment[];
   recipients: Recipient[];
   subject: string;
@@ -34,13 +31,16 @@ export interface Recipient {
   name: string;
 }
 
+export interface AttachmentDTO {
+  extension: string;
+  file: {
+    fileName: string;
+    content: string;
+  };
+}
+
 export interface Attachment {
-  path: string; // TODO: Remove this, only used to make MessageViewAttachment work
-  contentLength: number;
-  dataId: number;
+  path: string;
   extension: string;
   fileName: string;
-  fileNameShort: string;
-  name: string;
-  file: { fileName: string; content: Uint8Array };
 }

@@ -1,2 +1,1 @@
-export { default as setup } from "./setup";
-export { default as migrate } from "./migrate";
+export { default as Db } from "./setup";

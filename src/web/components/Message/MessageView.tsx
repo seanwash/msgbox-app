@@ -33,13 +33,8 @@ const MessageView: React.FC = () => {
       return ipcRenderer
         .invoke("fetchMessage", selectedMessage)
         .then((result) => {
-          result.recipients = result.recipients
-            ? JSON.parse(result.recipients)
-            : [];
-          result.attachments = result.attachments
-            ? JSON.parse(result.attachments)
-            : [];
-
+          result.recipients = result.recipients ? result.recipients : [];
+          result.attachments = result.attachments ? result.attachments : [];
           return result;
         });
     },
