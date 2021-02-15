@@ -2,7 +2,6 @@ import React, { FormEvent, useEffect, useRef, useState } from "react";
 import MessageListItem from "./MessageListItem";
 import { Message } from "../../../types";
 import { useGlobalDispatch } from "../../context/GlobalContext";
-import MessageDrop from "./MessageDrop";
 import { ipcRenderer } from "electron";
 import { useInfiniteQuery, useQueryClient } from "react-query";
 import { useIntersection } from "react-use";
@@ -60,8 +59,6 @@ const MessageList = () => {
 
   return (
     <>
-      <MessageDrop />
-
       <div>
         <form onSubmit={handleSearch}>
           <input
