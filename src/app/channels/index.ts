@@ -9,7 +9,7 @@ import {
   deleteMessage,
 } from "./message.channel";
 
-export default function () {
+export default function (): void {
   const availableChannels: IChannel[] = [
     fetchAllMessages,
     fetchMessage,

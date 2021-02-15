@@ -50,7 +50,7 @@ export const createMessage: IChannel = {
     // TODO: EW. Don't judge me.
     const messageId = cuid();
     const attachmentBaseDir = `${DATA_DIR}/${messageId}`;
-    let attachmentData: Attachment[] = [];
+    const attachmentData: Attachment[] = [];
 
     // If the attachments directory doesn't exist, then it should be created
     // so that saving attachments doesn't error.
