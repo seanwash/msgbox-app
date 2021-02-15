@@ -8,7 +8,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 const queryClient = new QueryClient();
 
-function App() {
+const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <GlobalContextProvider>
@@ -21,6 +21,6 @@ function App() {
       </GlobalContextProvider>
     </QueryClientProvider>
   );
-}
+};
 
 export default App;
