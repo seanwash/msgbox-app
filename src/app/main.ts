@@ -1,5 +1,7 @@
 import { app, BrowserWindow } from "electron";
-import * as isDev from "electron-is-dev";
+import isDev from "electron-is-dev";
+import path from "path";
+import url from "url";
 import registerChannels from "./channels";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -20,7 +22,13 @@ function createWindow() {
   });
 
   win.loadURL(
-    isDev ? "http://localhost:9000" : `file://${app.getAppPath()}/index.html`
+    isDev
+      ? "http://localhost:9000"
+      : url.format({
+          pathname: path.join(__dirname, "/index.html"),
+          protocol: "file:",
+          slashes: true,
+        })
   );
 
   // Register all of the available channels that listen for messages sent by the renderer process.
