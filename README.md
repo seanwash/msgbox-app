@@ -1,7 +1,9 @@
 # MsgBox App
 
-This is a thing that will exist someday. Don't judge the code, it's forever WIP.
+MsgBox is a tool for viewing the contents of [msg](https://fileinfo.com/extension/msg) files. Currently, it allows you to:
 
-## Links
+* Import unlimited msg files
+* View attachments contained in import msg files
+* Search the contents of imported msg
 
-[Beta Project](https://github.com/seanwash/msgbox-app/projects/1)
+This project is still in early alpha/proof of concept stage and is not to be considered stable. To see what's in the works, you can view the [Beta Project](https://github.com/seanwash/msgbox-app/projects/1).
