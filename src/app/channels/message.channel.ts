@@ -3,6 +3,7 @@ import path from "path";
 import fs from "fs";
 import { Db } from "../db";
 import { Attachment, AttachmentDTO, IChannel, Message } from "../../types";
+import cuid from "cuid";
 
 const db = Db();
 // TODO: We need to make sure that this dir exists before we can write to it.
@@ -47,27 +48,32 @@ export const createMessage: IChannel = {
   name: "createMessage",
   listener: async (event, message) => {
     // TODO: EW. Don't judge me.
+    const messageId = cuid();
+    const attachmentBaseDir = `${DATA_DIR}/${messageId}`;
     let attachmentData: Attachment[] = [];
+
+    fs.mkdirSync(attachmentBaseDir);
 
     message.attachments.forEach((attachment: AttachmentDTO) => {
       // TODO: Files should live in a directory with other files separated by attachment id.
-      const path = `${DATA_DIR}/${attachment.file.fileName}`;
+      const attachmentPath = `${attachmentBaseDir}/${attachment.file.fileName}`;
 
-      fs.writeFileSync(path, Buffer.from(attachment.file.content), {
+      fs.writeFileSync(attachmentPath, Buffer.from(attachment.file.content), {
         flag: "w", // create if doesn't already exist
       });
 
       attachmentData.push({
         fileName: attachment.file.fileName,
         extension: attachment.extension,
-        path,
+        path: attachmentPath,
       });
     });
 
+    message._id = messageId;
     message.attachments = attachmentData;
 
     try {
-      const result = await db.post(message);
+      const result = await db.put(message);
       console.log("-----", "created message", result.id);
       return result;
     } catch (err) {
