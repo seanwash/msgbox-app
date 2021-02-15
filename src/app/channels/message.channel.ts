@@ -52,10 +52,19 @@ export const createMessage: IChannel = {
     const attachmentBaseDir = `${DATA_DIR}/${messageId}`;
     let attachmentData: Attachment[] = [];
 
-    fs.mkdirSync(attachmentBaseDir);
+    // If the attachments directory doesn't exist, then it should be created
+    // so that saving attachments doesn't error.
+    // TODO: Refactor this to somewhere else.
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR);
+    }
+
+    // Only create the nested attachment dir if the message has any attachments.
+    if (message.attachments?.length) {
+      fs.mkdirSync(attachmentBaseDir);
+    }
 
     message.attachments.forEach((attachment: AttachmentDTO) => {
-      // TODO: Files should live in a directory with other files separated by attachment id.
       const attachmentPath = `${attachmentBaseDir}/${attachment.file.fileName}`;
 
       fs.writeFileSync(attachmentPath, Buffer.from(attachment.file.content), {
@@ -73,9 +82,7 @@ export const createMessage: IChannel = {
     message.attachments = attachmentData;
 
     try {
-      const result = await db.put(message);
-      console.log("-----", "created message", result.id);
-      return result;
+      return await db.put(message);
     } catch (err) {
       console.log("-----", "failed to create", err);
     }
@@ -86,14 +93,12 @@ export const deleteMessage: IChannel = {
   name: "deleteMessage",
   listener: async (event, id) => {
     const doc = await db.get<Message>(id);
+    const attachmentDir = `${DATA_DIR}/${doc._id}`;
+    const hasAttachments = fs.existsSync(attachmentDir);
 
-    doc.attachments.forEach((attachment: Attachment) => {
-      try {
-        fs.unlinkSync(attachment.path);
-      } catch (err) {
-        console.log("----- Error", "deleteMessage", err);
-      }
-    });
+    if (hasAttachments) {
+      fs.rmdirSync(attachmentDir, { recursive: true });
+    }
 
     return await db.remove(doc);
   },
