@@ -17,7 +17,7 @@ const MessageListItem: React.FC<Props> = ({ message, onSelect, onDelete }) => {
       <button
         onClick={onInteraction}
         onFocus={onInteraction}
-        className="px-6 py-5 hover:bg-gray-50 w-full text-left appearance-none"
+        className="px-6 py-5 bg-white hover:bg-gray-50 w-full text-left appearance-none"
       >
         <div className="mb-2">{message.subject}</div>
 

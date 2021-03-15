@@ -59,21 +59,19 @@ const MessageList = () => {
 
   return (
     <>
-      <div>
-        <form onSubmit={handleSearch}>
-          <input
-            className="w-full px-6 py-4"
-            type="search"
-            placeholder="Search"
-            onChange={(event) => setSearch(event.currentTarget.value)}
-            value={search}
-          />
-        </form>
-      </div>
+      <form onSubmit={handleSearch}>
+        <input
+          className="w-full px-6 py-4"
+          type="search"
+          placeholder="Search"
+          onChange={(event) => setSearch(event.currentTarget.value)}
+          value={search}
+        />
+      </form>
 
       {!isLoading && data && (
         <div className="bg-gray-100 px-6 py-4">
-          {data.pages[0].total_rows} Msgs
+          {data.pages[0].total_rows} Messages
         </div>
       )}
 

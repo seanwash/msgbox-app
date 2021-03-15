@@ -45,6 +45,8 @@ const MessageView: React.FC = () => {
 
   const headers = parseHeaders(message?.headers);
 
+  const messageDate = new Date(headers.Date).toDateString();
+
   const Contact = ({ name, email }: { name: string; email: string }) => (
     <div>
       <abbr title={email}>{name}</abbr>;
@@ -58,16 +60,18 @@ const MessageView: React.FC = () => {
   );
 
   return !isLoading && message ? (
-    <div className="p-4">
-      <time className="text-sm">{headers.Date}</time>
-      <h2 className="text-xl font-bold">{message.subject}</h2>
+    <div className="m-4 bg-white overflow-hidden rounded-sm shadow-sm">
+      <div className="p-6">
+        <h2 className="text-2xl font-bold">{message.subject}</h2>
+        <time className="block text-sm mt-2 text-gray-500">{messageDate}</time>
+      </div>
 
-      <div className="mt-8">
+      <div className="p-6 pt-0">
         <SectionHeading>From</SectionHeading>
         <Contact name={message.senderName} email={message.senderEmail} />
       </div>
 
-      <div className="mt-8">
+      <div className="p-6 pt-0">
         <SectionHeading>To</SectionHeading>
         {message.recipients &&
           message.recipients.map((recipient: any) => (
@@ -79,18 +83,18 @@ const MessageView: React.FC = () => {
           ))}
       </div>
 
-      <div className="mt-8">
+      <div className="p-6 pt-0">
         <SectionHeading>Attachments</SectionHeading>
-        {message.attachments ? (
+        {message?.attachments?.length ? (
           message.attachments.map((attachment: any, i: number) => (
             <MessageViewAttachment key={i} attachment={attachment} />
           ))
         ) : (
-          <div>None</div>
+          <div>No Attachments</div>
         )}
       </div>
 
-      <div className="mt-8">
+      <div className="p-6 bg-gray-50">
         <SectionHeading>Message</SectionHeading>
         <div className="whitespace-pre-wrap">{message.body}</div>
       </div>

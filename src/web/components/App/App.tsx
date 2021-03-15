@@ -13,12 +13,12 @@ const App: React.FC = () => {
     <QueryClientProvider client={queryClient}>
       <GlobalContextProvider>
         <FileDropProvider>
-          <div className="App h-full">
+          <div className="App bg-gray-200 h-full">
             <MessageBox />
-            <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
           </div>
         </FileDropProvider>
       </GlobalContextProvider>
+      <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
     </QueryClientProvider>
   );
 };
