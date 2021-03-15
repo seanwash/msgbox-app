@@ -1,7 +1,12 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
+const webpack = require("webpack");
 const path = require("path");
 
+const isDevelopment = process.env.NODE_ENV !== "production";
+
 module.exports = {
+  mode: isDevelopment ? "development" : "production",
   entry: path.join(__dirname, "../src/web/index.tsx"),
   target: "electron-renderer",
   devtool: "source-map",
@@ -22,7 +27,13 @@ module.exports = {
         test: /\.ts(x?)$/,
         include: /src\/web/,
         exclude: /node_modules/,
-        use: [{ loader: "ts-loader" }],
+        use: [
+          isDevelopment && {
+            loader: "babel-loader",
+            options: { plugins: ["react-refresh/babel"] },
+          },
+          { loader: "ts-loader" },
+        ].filter(Boolean),
       },
       {
         test: /\.css$/i,
@@ -38,5 +49,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "../src/web/index.html"),
     }),
-  ],
+    isDevelopment && new webpack.HotModuleReplacementPlugin(),
+    isDevelopment && new ReactRefreshWebpackPlugin(),
+  ].filter(Boolean),
 };
