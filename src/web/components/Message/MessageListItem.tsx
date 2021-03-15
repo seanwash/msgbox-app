@@ -2,12 +2,18 @@ import React from "react";
 import { Message, Attachment } from "../../../types";
 
 type Props = {
+  selected: boolean;
   message: Message;
   onSelect: (message: Message) => void;
   onDelete: (message: Message) => void;
 };
 
-const MessageListItem: React.FC<Props> = ({ message, onSelect, onDelete }) => {
+const MessageListItem: React.FC<Props> = ({
+  selected,
+  message,
+  onSelect,
+  onDelete,
+}) => {
   const onInteraction = () => onSelect(message);
   const handleDelete = () => onDelete(message);
   const attachments: Attachment[] = message.attachments;
@@ -17,7 +23,9 @@ const MessageListItem: React.FC<Props> = ({ message, onSelect, onDelete }) => {
       <button
         onClick={onInteraction}
         onFocus={onInteraction}
-        className="pl-6 pr-10 py-5 bg-white hover:bg-gray-50 w-full text-left appearance-none"
+        className={`pl-6 pr-10 py-5 bg-white hover:bg-gray-50 w-full text-left appearance-none ${
+          selected ? "bg-blue-50 hover:bg-blue-100" : ""
+        }`}
       >
         <div className="mb-2">{message.subject}</div>
 
@@ -33,7 +41,9 @@ const MessageListItem: React.FC<Props> = ({ message, onSelect, onDelete }) => {
 
       <button
         onClick={handleDelete}
-        className="text-gray-300 hover:text-gray-600 appearance-none h-5 w-5 absolute top-2 right-2 z-10"
+        className={`appearance-none h-5 w-5 absolute top-2 right-2 z-10 hover:text-gray-900 ${
+          selected ? "text-gray-500" : "text-gray-300"
+        }`}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

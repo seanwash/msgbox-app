@@ -1,13 +1,14 @@
 import React, { FormEvent, useEffect, useRef, useState } from "react";
 import MessageListItem from "./MessageListItem";
 import { Message } from "../../../types";
-import { useGlobalDispatch } from "../../context/GlobalContext";
+import { useGlobalDispatch, useGlobalState } from "../../context/GlobalContext";
 import { ipcRenderer } from "electron";
 import { useInfiniteQuery, useQueryClient } from "react-query";
 import { useIntersection } from "react-use";
 
 const MessageList = () => {
   const dispatch = useGlobalDispatch();
+  const { selectedMessage } = useGlobalState();
   const queryClient = useQueryClient();
   const limit = 20;
   const loadMoreRef = useRef(null);
@@ -39,7 +40,7 @@ const MessageList = () => {
 
   useEffect(() => {
     loadMoreIntersection?.isIntersecting && fetchNextPage();
-  }, [loadMoreIntersection]);
+  }, [fetchNextPage, loadMoreIntersection]);
 
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -76,16 +77,14 @@ const MessageList = () => {
       )}
 
       <div className="overflow-y-auto">
-        <nav
-          className="divide-y divide-gray-200 border-r border-gray-200"
-          aria-label="Sidebar"
-        >
+        <nav className="divide-y divide-gray-200" aria-label="Sidebar">
           {!isLoading &&
             data &&
             data.pages.map((page) =>
               page.rows.map((row: any) => {
                 return (
                   <MessageListItem
+                    selected={row.doc._id === selectedMessage}
                     key={row.doc._id}
                     message={row.doc}
                     onSelect={onSelect}
