@@ -62,7 +62,7 @@ const MessageList = () => {
     <>
       <form onSubmit={handleSearch}>
         <input
-          className="w-full px-6 py-4 focus:outline-none focus:ring ring-blue-500 ring-inset"
+          className="w-full px-6 py-4 focus:outline-none focus:ring-2 ring-blue-500 ring-inset"
           type="search"
           placeholder="Search"
           onChange={(event) => setSearch(event.currentTarget.value)}

@@ -22,7 +22,7 @@ const MessageListItem: React.FC<Props> = ({
     <div className="relative">
       <button
         onClick={onInteraction}
-        className={`pl-6 pr-10 py-5 bg-white hover:bg-gray-50 w-full text-left appearance-none focus:outline-none focus:ring ring-blue-500 ring-inset ${
+        className={`pl-6 pr-10 py-5 bg-white hover:bg-gray-50 w-full text-left appearance-none focus:outline-none focus:ring-2 ring-blue-500 ring-inset ${
           selected ? "bg-blue-50 hover:bg-blue-100" : ""
         }`}
       >
@@ -40,7 +40,7 @@ const MessageListItem: React.FC<Props> = ({
 
       <button
         onClick={handleDelete}
-        className={`h-5 w-5 absolute top-2 right-2 z-10 hover:text-gray-900 appearance-none focus:outline-none focus:ring focus ring-blue-500 ${
+        className={`h-5 w-5 absolute top-2 right-2 z-10 hover:text-gray-900 appearance-none focus:outline-none focus:ring-2 focus ring-blue-500 ${
           selected ? "text-gray-500" : "text-gray-300"
         }`}
       >

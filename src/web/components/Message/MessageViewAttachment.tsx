@@ -14,7 +14,10 @@ const MessageViewAttachment: React.FC<Props> = ({ attachment }) => {
 
   return (
     <div>
-      <button onClick={handleClick} className="text-blue-500 underline">
+      <button
+        onClick={handleClick}
+        className="text-blue-500 underline focus:outline-none focus:ring-2 ring-blue-500"
+      >
         {attachment.fileName}
       </button>
     </div>
