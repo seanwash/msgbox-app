@@ -73,10 +73,11 @@ const MessageView: React.FC = () => {
 
       <div className="p-6 pt-0">
         <SectionHeading>To</SectionHeading>
+        {/* Use index below because a recipient can be listed more than once */}
         {message.recipients &&
-          message.recipients.map((recipient: any) => (
+          message.recipients.map((recipient: any, index: number) => (
             <Contact
-              key={recipient.email}
+              key={index}
               name={recipient.name}
               email={recipient.email}
             />
