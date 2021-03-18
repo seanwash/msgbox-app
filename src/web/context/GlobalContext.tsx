@@ -1,14 +1,16 @@
 import React, { createContext, ReactNode, useContext, useReducer } from "react";
 
-type Action = { type: "selectMessage"; id?: number };
+type Action = { type: "selectMessage"; id?: string };
 
 type Dispatch = (action: Action) => void;
 
 type State = {
-  selectedMessage: number | undefined;
+  selectedMessageId: string | undefined;
 };
 
 type ProviderProps = { children: ReactNode };
+
+const SELECTED_MESSAGE_ID_LOCAL_STORAGE_KEY = "MsgBoxSelectedMessageId";
 
 // https://kentcdodds.com/blog/how-to-use-react-context-effectively
 export const GlobalStateContext = createContext<State | undefined>(undefined);
@@ -19,10 +21,11 @@ export const GlobalDispatchContext = createContext<Dispatch | undefined>(
 function globalReducer(state: State, action: Action) {
   switch (action.type) {
     case "selectMessage": {
-      return {
-        ...state,
-        selectedMessage: action.id,
-      };
+      if (action?.id) {
+        localStorage.setItem(SELECTED_MESSAGE_ID_LOCAL_STORAGE_KEY, action.id);
+      }
+
+      return { ...state, selectedMessageId: action.id };
     }
 
     default: {
@@ -33,7 +36,8 @@ function globalReducer(state: State, action: Action) {
 
 function GlobalContextProvider({ children }: ProviderProps) {
   const [state, dispatch] = useReducer(globalReducer, {
-    selectedMessage: undefined,
+    selectedMessageId:
+      localStorage.getItem(SELECTED_MESSAGE_ID_LOCAL_STORAGE_KEY) || undefined,
   });
 
   return (

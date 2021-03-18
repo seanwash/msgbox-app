@@ -8,7 +8,7 @@ import { useIntersection } from "react-use";
 
 const MessageList = () => {
   const dispatch = useGlobalDispatch();
-  const { selectedMessage } = useGlobalState();
+  const { selectedMessageId } = useGlobalState();
   const queryClient = useQueryClient();
   const limit = 20;
   const loadMoreRef = useRef(null);
@@ -49,7 +49,7 @@ const MessageList = () => {
 
   const onSelect = (message: Message) => {
     const id = message._id as unknown;
-    dispatch({ type: "selectMessage", id: id as number });
+    dispatch({ type: "selectMessage", id: id as string });
   };
 
   const onDelete = async (message: Message) => {
@@ -84,7 +84,7 @@ const MessageList = () => {
               page.rows.map((row: any) => {
                 return (
                   <MessageListItem
-                    selected={row.doc._id === selectedMessage}
+                    selected={row.doc._id === selectedMessageId}
                     key={row.doc._id}
                     message={row.doc}
                     onSelect={onSelect}

@@ -25,13 +25,13 @@ function parseHeaders(headers: any) {
 }
 
 const MessageView: React.FC = () => {
-  const { selectedMessage } = useGlobalState();
+  const { selectedMessageId } = useGlobalState();
 
   const { data: message, isLoading } = useQuery(
-    ["messages", selectedMessage],
+    ["messages", selectedMessageId],
     () => {
       return ipcRenderer
-        .invoke("fetchMessage", selectedMessage)
+        .invoke("fetchMessage", selectedMessageId)
         .then((result) => {
           result.recipients = result.recipients ? result.recipients : [];
           result.attachments = result.attachments ? result.attachments : [];
@@ -39,7 +39,7 @@ const MessageView: React.FC = () => {
         });
     },
     {
-      enabled: !!selectedMessage,
+      enabled: !!selectedMessageId,
     }
   );
 
