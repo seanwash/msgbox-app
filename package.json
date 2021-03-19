@@ -25,8 +25,8 @@
     "dev": "concurrently --kill-others --names=\"WEB,APP\" -c \"bgCyan.black.bold,bgBlack.white.bold\" \"npm run react:dev\" \"npm run electron:dev\"",
     "start": "npm run build && electron dist/main.js",
     "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
-    "package": "npm run build && electron-forge package",
-    "make": "npm run build && electron-forge make",
+    "package": "NODE_ENV=production npm run build && electron-forge package",
+    "make": "NODE_ENV=production npm run build && electron-forge make",
     "rebuild": "electron-rebuild -f -w pouchdb",
     "postinstall": "npm run rebuild"
   },
