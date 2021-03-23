@@ -47,8 +47,15 @@ const MessageList = () => {
     queryClient.invalidateQueries(["fetchAllMessages", search]);
   };
 
-  const onSelect = (message: Message) => {
+  const onSelect = async (message: Message) => {
     const id = message._id as unknown;
+
+    if (!message.read) {
+      await ipcRenderer.invoke("markMessageAsRead", id);
+      // TODO: Potential performance issue here, will cause the entire sidebar to re-render.
+      await queryClient.invalidateQueries("fetchAllMessages");
+    }
+
     dispatch({ type: "selectMessage", id: id as string });
   };
 
