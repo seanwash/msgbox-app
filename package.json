@@ -1,5 +1,4 @@
 {
-  "name": "MsgBox",
   "version": "0.1.0",
   "private": true,
   "homepage": "./",
@@ -27,6 +26,7 @@
     "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
     "package": "NODE_ENV=production npm run build && electron-forge package",
     "make": "NODE_ENV=production npm run build && electron-forge make",
+    "publish": "electron-forge publish",
     "rebuild": "electron-rebuild -f -w pouchdb",
     "postinstall": "npm run rebuild"
   },
@@ -45,6 +45,7 @@
     "@electron-forge/maker-rpm": "^6.0.0-beta.54",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
     "@electron-forge/maker-zip": "^6.0.0-beta.54",
+    "@electron-forge/publisher-github": "^6.0.0-beta.54",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
     "@types/mime-types": "^2.1.0",
     "@types/pouchdb": "^6.4.0",
@@ -54,6 +55,7 @@
     "@typescript-eslint/parser": "^4.15.0",
     "babel-loader": "^8.2.2",
     "concurrently": "^5.3.0",
+    "dotenv": "^8.2.0",
     "electron": "^11.2.3",
     "electron-is-dev": "^1.2.0",
     "electron-rebuild": "^2.3.5",
@@ -74,32 +76,5 @@
     "webpack": "^5.21.2",
     "webpack-cli": "^4.5.0",
     "webpack-dev-server": "^3.11.2"
-  },
-  "config": {
-    "forge": {
-      "packagerConfig": {},
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "msgbox"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ]
-    }
   }
 }
