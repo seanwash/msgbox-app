@@ -103,3 +103,19 @@ export const deleteMessage: IChannel = {
     return await db.remove(doc);
   },
 };
+
+export const markMessageAsRead: IChannel = {
+  name: "markMessageAsRead",
+  listener: async (event, id) => {
+    try {
+      const doc = await db.get<Message>(id);
+      return await db.put<Message>({
+        ...doc,
+        read: true,
+      });
+    } catch (err) {
+      console.log("-----", "failed to create", err);
+      return { error: err.toString() };
+    }
+  },
+};

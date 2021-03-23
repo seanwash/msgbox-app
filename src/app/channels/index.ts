@@ -7,7 +7,8 @@ import {
   fetchMessage,
   createMessage,
   deleteMessage,
-} from "./message.channel";
+  markMessageAsRead,
+} from "./message";
 
 export default function (): void {
   const availableChannels: IChannel[] = [
@@ -15,6 +16,7 @@ export default function (): void {
     fetchMessage,
     createMessage,
     deleteMessage,
+    markMessageAsRead,
   ];
 
   availableChannels.forEach(({ name, listener }) => {

@@ -4,7 +4,8 @@ type TMessageChannelNames =
   | "fetchMessage"
   | "fetchAllMessages"
   | "createMessage"
-  | "deleteMessage";
+  | "deleteMessage"
+  | "markMessageAsRead";
 
 export type TChannelNames = TMessageChannelNames;
 
@@ -24,6 +25,7 @@ export interface Message {
   senderName: string;
   senderEmail: string;
   compressedRtf: string;
+  read: boolean;
 }
 
 export interface Recipient {

@@ -24,18 +24,26 @@ const MessageListItem: React.FC<Props> = ({
         onClick={onInteraction}
         className={`pl-6 pr-10 py-5 bg-white hover:bg-gray-50 w-full text-left appearance-none focus:outline-none focus:ring-2 ring-blue-500 ring-inset ${
           selected ? "bg-blue-50 hover:bg-blue-100" : ""
-        }`}
+        } flex`}
       >
-        <div className="mb-2">{message.subject}</div>
+        {!message.read && (
+          <div className="mr-4">
+            <span className="h-3 w-3 bg-blue-500 rounded-full inline-block" />
+          </div>
+        )}
 
-        {attachments.map((attachment) => (
-          <span
-            key={attachment.fileName}
-            className="text-xs px-2 py-1 bg-blue-200 rounded-sm mr-2"
-          >
-            {attachment.extension}
-          </span>
-        ))}
+        <div>
+          <div className="mb-2">{message.subject}</div>
+
+          {attachments.map((attachment) => (
+            <span
+              key={attachment.fileName}
+              className="text-xs px-2 py-1 bg-blue-200 rounded-sm mr-2"
+            >
+              {attachment.extension}
+            </span>
+          ))}
+        </div>
       </button>
 
       <button

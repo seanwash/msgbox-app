@@ -5,7 +5,7 @@ import { Message } from "../../types";
 import { useMutation, useQueryClient } from "react-query";
 import { ipcRenderer } from "electron";
 
-const FileDropProvider: React.FC = ({ children }) => {
+const FileDrop: React.FC = ({ children }) => {
   const queryClient = useQueryClient();
   const mutation = useMutation(({ message }: any) => {
     return ipcRenderer.invoke("createMessage", message);
@@ -44,6 +44,7 @@ const FileDropProvider: React.FC = ({ children }) => {
             ...fileData,
             recipients: fileData.recipients,
             attachments: attachments,
+            read: false,
           },
         });
       };
@@ -68,4 +69,4 @@ const FileDropProvider: React.FC = ({ children }) => {
   return <>{children}</>;
 };
 
-export default FileDropProvider;
+export default FileDrop;

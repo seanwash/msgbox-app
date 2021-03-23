@@ -1,1 +1,1 @@
-export { default as FileDropProvider } from "./FileDrop.provider";
+export { default as FileDropProvider } from "./FileDrop";
